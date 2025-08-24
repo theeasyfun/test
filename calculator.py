@@ -267,12 +267,12 @@ class AreaCalculator:
             "深色": {
                 "bg": "#2e2e2e",
                 "fg": "#ecf0f1",
-                "result_bg": "#1e1e1e"
+                "result_bg": "#2e2e2e"
             },
-            "米色": {
-                "bg": "#f5f5dc",
+            "蓝色": {
+                "bg": "#aacad6",
                 "fg": "#333333",
-                "result_bg": "#fff8dc"
+                "result_bg": "#aacad6"
             }
         }
         self.current_skin = "默认"
@@ -296,12 +296,12 @@ class AreaCalculator:
         skin = self.skins[self.current_skin]
         
         # 设置 ttk 样式
-        style.configure('TFrame', background='#f8f9fa')
-        style.configure('Title.TLabel', font=('Arial', 18, 'bold'), background='#f8f9fa', foreground='#2c3e50')
+        style.configure('TFrame', background=skin["bg"])
+        style.configure('Title.TLabel', font=('Arial', 18, 'bold'), background=skin["bg"], foreground=skin["fg"])
         style.configure('TButton', font=('Arial', 11), padding=8)
-        style.configure('TLabel', background='#f8f9fa', font=('Arial', 10))
-        style.configure('TLabelframe', background='#f8f9fa', font=('Arial', 11, 'bold'))
-        style.configure('TLabelframe.Label', background='#f8f9fa', font=('Arial', 11, 'bold'))
+        style.configure('TLabel', background=skin["bg"], foreground=skin["fg"],font=('Arial', 10))
+        style.configure('TLabelframe', background=skin["bg"], foreground=skin["fg"],font=('Arial', 11, 'bold'))
+        style.configure('TLabelframe.Label', background=skin["bg"], foreground=skin["fg"],font=('Arial', 11, 'bold'))
         
         # 如果 result_text 已经存在，修改颜色
         if hasattr(self, "result_text"):
