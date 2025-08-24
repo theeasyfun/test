@@ -246,14 +246,41 @@ class Circle(Shape):
         return area, {"直径": self.format_value(self.diameter) + f" {self.unit}", 
                      "半径(厘米)": self.format_value(radius_cm) + " cm"}
 
+import tkinter as tk
+from tkinter import ttk
+
 class AreaCalculator:
     """面积计算器主类"""
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("通用面积计算器")
-        self.root.geometry("700x600")  # 增大主窗口尺寸
+        self.root.geometry("700x1000")  # 增大主窗口尺寸
         self.root.resizable(True, True)
-        
+
+        # 定义皮肤
+        self.skins = {
+            "默认": {
+                "bg": "#f8f9fa",
+                "fg": "#2c3e50",
+                "result_bg": "#ffffff"
+            },
+            "深色": {
+                "bg": "#2e2e2e",
+                "fg": "#ecf0f1",
+                "result_bg": "#2e2e2e"
+            },
+            "蓝色": {
+                "bg": "#aacad6",
+                "fg": "#333333",
+                "result_bg": "#aacad6"
+            }
+        }
+        self.current_skin = "默认"
+
+        # 主框架
+        self.main_frame = ttk.Frame(self.root, padding=25)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+
         # 设置样式
         self.setup_style()
         
@@ -264,14 +291,25 @@ class AreaCalculator:
         """设置界面样式"""
         style = ttk.Style()
         style.theme_use('clam')  # 使用更现代的主题
+
+        # 当前皮肤
+        skin = self.skins[self.current_skin]
         
-        style.configure('TFrame', background='#f8f9fa')
-        style.configure('Title.TLabel', font=('Arial', 18, 'bold'), background='#f8f9fa', foreground='#2c3e50')
+        # 设置 ttk 样式
+        style.configure('TFrame', background=skin["bg"])
+        style.configure('Title.TLabel', font=('Arial', 18, 'bold'), background=skin["bg"], foreground=skin["fg"])
         style.configure('TButton', font=('Arial', 11), padding=8)
-        style.configure('TLabel', background='#f8f9fa', font=('Arial', 10))
-        style.configure('TLabelframe', background='#f8f9fa', font=('Arial', 11, 'bold'))
-        style.configure('TLabelframe.Label', background='#f8f9fa', font=('Arial', 11, 'bold'))
+        style.configure('TLabel', background=skin["bg"], foreground=skin["fg"],font=('Arial', 10))
+        style.configure('TLabelframe', background=skin["bg"], foreground=skin["fg"],font=('Arial', 11, 'bold'))
+        style.configure('TLabelframe.Label', background=skin["bg"], foreground=skin["fg"],font=('Arial', 11, 'bold'))
         
+        # 如果 result_text 已经存在，修改颜色
+        if hasattr(self, "result_text"):
+            self.result_text.configure(bg=skin["result_bg"], fg=skin["fg"])
+
+        # 改变根窗口颜色
+        self.root.configure(bg=skin["bg"])
+
     def create_widgets(self):
         """创建界面组件"""
         # 主框架
@@ -281,6 +319,15 @@ class AreaCalculator:
         # 标题
         title_label = ttk.Label(main_frame, text="📐 通用面积计算器", style='Title.TLabel')
         title_label.pack(pady=25)
+
+        # 新增皮肤选择下拉框
+        skin_frame = ttk.Frame(main_frame)
+        skin_frame.pack(pady=10)
+        ttk.Label(skin_frame, text="🎨 选择皮肤:").pack(side=tk.LEFT, padx=5)
+        self.skin_combo = ttk.Combobox(skin_frame, values=list(self.skins.keys()), state="readonly", width=10)
+        self.skin_combo.set(self.current_skin)
+        self.skin_combo.pack(side=tk.LEFT)
+        self.skin_combo.bind("<<ComboboxSelected>>", self.change_skin)
         
         # 形状选择框架
         shape_frame = ttk.LabelFrame(main_frame, text="选择形状", padding=15)
@@ -346,6 +393,11 @@ class AreaCalculator:
         
         # 显示欢迎信息
         self.show_welcome_message()
+
+    def change_skin(self, event=None):
+        """切换皮肤"""
+        self.current_skin = self.skin_combo.get()
+        self.setup_style()    
         
     def show_welcome_message(self):
         """显示欢迎信息"""
